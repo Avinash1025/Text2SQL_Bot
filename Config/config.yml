@@ -1,0 +1,9 @@
+# flask app setting
+app:
+  debug: true
+  host: "0.0.0.0"
+  port: 95890
+
+api: 
+  groq_api: "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"
+  model: "llama3-70b-8192"
