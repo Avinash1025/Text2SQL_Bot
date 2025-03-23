@@ -5,5 +5,12 @@ app:
   port: 95890
 
 groq: 
-  groq_api: "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"
   model: "llama3-8b-8192"
+
+ollama:
+  host: "0.0.0.0"
+  port: "11434"
+  embedding_model: "nomic-embed-text:latest"
+  request_timeout: 1000
+  temperature: 0.4
+  
