@@ -1,9 +1,18 @@
+# ============================ SQL Prompt Functions ============================
 
-def sql_llm_prompt_function(query_str, schema) -> str:
-    
-    print(schema)
-    
-    prompt_str = (f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+def sql_llm_prompt_function(query_str: str, schema: str) -> str:
+    """
+    Generate a prompt for the LLM to create an SQLite query based on user input and schema.
+
+    Args:
+        query_str (str): User's input query.
+        schema (str): Schema of the database table.
+
+    Returns:
+        str: Formatted prompt string for the LLM.
+    """
+    prompt_str = (
+        f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 You are an AI assistant that generates a `sqlite` query strictly following the user's input. You are given the following inputs:
 - User Input: {query_str}
 - Schemas: {schema}
@@ -12,83 +21,90 @@ You are an AI assistant that generates a `sqlite` query strictly following the u
 - Avoid using columns or database-specific functions that are not present in the selected table's schema.
 - The generated SQL query must strictly follow `sqlite` syntax.
 
- <|eot_id|>
-# question:<|start_header_id|>user<|end_header_id|> : {query_str}
+<|eot_id|>
+# question:<|start_header_id|>user<|end_header_id|>: {query_str}
 
-You are strictly required to always give the answer in the following format :
+You are strictly required to always give the answer in the following format:
 Question: Question here
 Table Selected For Query: Table Name
 Selected Table Schema: Table Schema
 SQLQuery: SQL Query to run
 Explanation: Explanation of SQL Query
 
-Give only and only the SQL query, dont give any text with it.
+Give only and only the SQL query, don't give any text with it.
 <|eot_id|>
-<|start_header_id|>assistant<|end_header_id|>""")
-
+<|start_header_id|>assistant<|end_header_id|>"""
+    )
     print(prompt_str)
     return prompt_str
 
+
+# ============================ Response Prompt Functions ============================
 import pandas as pd
 from math import ceil
-def final_response_prompt(query_str, sql_query, data) -> str:
+
+def final_response_prompt(query_str: str, sql_query: str, data) -> str:
+    """
+    Generate a response prompt for the LLM based on the query, SQL query, and data.
+
+    Args:
+        query_str (str): User's input query.
+        sql_query (str): SQL query used to fetch the data.
+        data: Data retrieved from the database.
+
+    Returns:
+        str: Formatted response prompt string.
+    """
     try:
+        # Extract metadata from the data object
         data_str = data[0].metadata
         data_str.pop("sql_query", None)
     except Exception as e:
         print(f"Error: {e}")
         data_str = data
-         
+
     if data:
         prompt_str = (
-            "You are an AI  assistant designed to provide clear, detailed, and well-structured responses"
-            
+            "You are an AI assistant designed to provide clear, detailed, and well-structured responses.\n\n"
             f"User's Input: {query_str}\n\n"
-
             "SQL Query used to answer the user's question:\n"
             f"{sql_query}\n\n"
-            
-            "Data provided to answer the user's question\n"
+            "Data provided to answer the user's question:\n"
             f"{data_str}\n\n"
-            
             "Instructions:\n"
-            "Synthesize a comprehensive response using the provided data to answer the user's query.\n"
-            "Adhere to the date ranges and time formats present in the data.\n"
-
-            "Format the response for clarity:\n"
-            "  - Use **bold** for emphasis where needed.\n"
-            "  - Utilize bullet points for listing multiple items or findings.\n"
-            "  - Use tables to present structured or comparative data.\n"
-            
+            "- Synthesize a comprehensive response using the provided data to answer the user's query.\n"
+            "- Adhere to the date ranges and time formats present in the data.\n\n"
+            "Formatting Guidelines:\n"
+            "- Use **bold** for emphasis where needed.\n"
+            "- Utilize bullet points for listing multiple items or findings.\n"
+            "- Use tables to present structured or comparative data.\n\n"
             "Additional Guidelines:\n"
-            "- You are strictly advice do not include or reference the SQL query or the table names in the response.\n"
-            "- Exclude any extraneous information or statistics that are not available in the data.\n"
-            "- The response should be concise, directly address the query, and offer relevant insights or context when appropriate.\n\n"
-            
-            "Response: "
+            "- Do not include or reference the SQL query or table names in the response.\n"
+            "- Exclude extraneous information or statistics not available in the data.\n"
+            "- Ensure the response is concise, directly addresses the query, and offers relevant insights or context.\n\n"
+            "Response:"
         )
     else:
         prompt_str = (
-            "It seems that the provided data is empty, or the query didn't return any results.\n"
-            "User's Query: " + query_str + "\n\n"
-            "Unfortunately, no result were able to fetch. This could be due to a few reasons:\n"
-            "- There could be missing or incomplete data in the relevant time period or zone.\n"
-            "- The query might not have been properly formulated or could lack sufficient information.\n"
-
-            "To proceed, please consider the following suggestions:\n"
-            "- Rephrase your question or provide more details to clarify what you're looking for.\n"
+            "It seems that the provided data is empty, or the query didn't return any results.\n\n"
+            f"User's Query: {query_str}\n\n"
+            "Unfortunately, no results were fetched. This could be due to:\n"
+            "- Missing or incomplete data for the specified criteria.\n"
+            "- An improperly formulated query or insufficient information.\n\n"
+            "Suggestions:\n"
+            "- Rephrase your question or provide more details.\n"
             "- Verify the data availability for the specified criteria.\n"
             "- Ensure there are no typos or errors in the query.\n\n"
-            "Response: "
+            "Response:"
         )
 
     print(prompt_str)
     return prompt_str
 
-      
 
+# ============================ Context Definitions ============================
 CONTEXT = [
-   f"""
+    """
 Employee_Name: Full name of the employee.
 EmpID: Unique employee identification number.
 MarriedID: Indicates if the employee is married (1 = Yes, 0 = No).

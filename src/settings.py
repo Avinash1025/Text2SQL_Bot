@@ -1,6 +1,4 @@
-# ============================
-# Imports and Environment Setup
-# ============================
+# ============================ Imports and Environment Setup =============================
 import os
 from dotenv import load_dotenv
 from sqlalchemy import inspect
@@ -16,20 +14,16 @@ from llama_index.core.retrievers import SQLRetriever
 from src.utility import load_config, create_sqldb_and_tables
 from src.prompt import CONTEXT
 
-# ============================
-# Load Environment Variables
-# ============================
+# ============================ Load Environment Variables ================================
 load_dotenv()
 api_key = os.environ.get("GROQ_API_KEY")
 
-# ============================
-# Load Configuration
-# ============================
+
+# ============================ Load Configuration ========================================
 config = load_config()
 
-# ============================
-# Initialize LLM and Embedding Models
-# ============================
+
+# ============================ Initialize LLM and Embedding Models =======================
 # Initialize the Groq LLM
 llm_model = config["groq"]["model"]
 llm = Groq(model=llm_model, api_key=api_key)
@@ -48,9 +42,8 @@ embedding_model = OllamaEmbedding(
 Settings.llm = llm
 Settings.embed_model = embedding_model
 
-# ============================
-# Database Initialization
-# ============================
+
+# ============================ Database Initialization ==================================
 # Define paths for data and database
 data_dir_path = f"{os.getcwd()}/resources/data"
 sqldb_path = f"{os.getcwd()}/resources/Database.db"
@@ -63,9 +56,8 @@ inspector = inspect(engine)
 tables = inspector.get_table_names()
 print(f"Tables Present in db: {tables}")
 
-# ============================
-# SQL Database and Index Setup
-# ============================
+
+# ============================ SQL Database and Index Setup =============================
 # Create an SQLDatabase instance
 sql_database = SQLDatabase(engine, include_tables=tables)
 
@@ -87,11 +79,8 @@ obj_index = ObjectIndex.from_objects(
 
 # Create a retriever for fetching similar objects (tables) based on queries
 table_retriever = obj_index.as_retriever(similarity_top_k=3)
-print(table_schema_objs)
 
-# ============================
-# SQL Query Executor
-# ============================
+# ============================ SQL Query Executor ============================
 # Initialize the SQLRetriever with the SQLDatabase instance
 SQL_QUERY_EXECUTOR = SQLRetriever(sql_database)
 

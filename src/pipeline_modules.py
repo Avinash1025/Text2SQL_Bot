@@ -5,7 +5,7 @@ from llama_index.core.llms import ChatResponse
 
 from src.settings import sql_database, SQLTableSchema, SQL_QUERY_EXECUTOR
 
-# =======================================================================================
+# ============================ Get SQL Table Info Functions ============================
 def get_sqltable_info(table_schema_objs: List[SQLTableSchema]) -> str:
     """
     Generate a context string for each table based on its schema and additional context.
@@ -16,7 +16,6 @@ def get_sqltable_info(table_schema_objs: List[SQLTableSchema]) -> str:
     Returns:
         str: Combined context string for all tables.
     """
-    print(table_schema_objs)
     context_strs = []
 
     for table_schema_obj in table_schema_objs:
@@ -28,13 +27,13 @@ def get_sqltable_info(table_schema_objs: List[SQLTableSchema]) -> str:
             table_info += f"\nThe table description is: {table_schema_obj.context_str}"
 
         context_strs.append(table_info)
-        print(context_strs)
 
     # Return a combined context string for all tables
     return "\n\n".join(context_strs)
 
 
-# =======================================================================================
+# ============================ Extract SQL Query Functions ============================
+
 def extract_sql_query_from_response(response: ChatResponse) -> str:
     """
     Extract the SQL query from the LLM's response.
@@ -69,7 +68,7 @@ def extract_sql_query_from_response(response: ChatResponse) -> str:
     return sql_query
 
 
-# =======================================================================================
+# ============================ Execute SQL Query Functions ============================
 def execute_sql_query(sql_query: str):
     """
     Execute the given SQL query after validating it for safety.
@@ -83,7 +82,7 @@ def execute_sql_query(sql_query: str):
     try:
         # Convert the SQL query to lowercase for case-insensitive checks
         sql_lower = sql_query.lower()
-        print(sql_lower)
+        print(sql_query)
 
         # List of forbidden destructive and modification SQL keywords
         forbidden_keywords = ["delete", "drop", "truncate", "alter", "update", "insert"]

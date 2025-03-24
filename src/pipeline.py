@@ -13,6 +13,7 @@ from src.pipeline_modules import (
     execute_sql_query,
 )
 
+# Define functional components for the pipeline
 get_table_info_component = FnComponent(fn=get_sqltable_info)
 text2sql_prompt = FnComponent(fn=sql_llm_prompt_function)
 sql_query_fetcher = FnComponent(fn=extract_sql_query_from_response)
@@ -20,6 +21,7 @@ sql_query_executor = FnComponent(fn=execute_sql_query)
 response_prompt = FnComponent(fn=final_response_prompt)
 
 
+# Create the query pipeline with defined modules
 sql_query_pipeline = QueryPipeline(
     modules={
         "input": InputComponent(),
@@ -35,7 +37,7 @@ sql_query_pipeline = QueryPipeline(
     verbose=True
 )
 
-
+# Define the flow of data between components
 sql_query_pipeline.add_links([
     Link("input", "fetch_table_name"),
     Link("fetch_table_name", "get_table_info", dest_key="table_schema_objs"),
@@ -53,7 +55,7 @@ sql_query_pipeline.add_links([
 ])
 
 
-# create graph
+# Create a graph visualization of the pipeline
 from pyvis.network import Network
 net = Network(notebook=True, cdn_resources="in_line", directed=True)
 net.from_nx(sql_query_pipeline.dag)
