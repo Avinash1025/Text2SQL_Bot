@@ -58,10 +58,10 @@ def extract_sql_query_from_response(response: ChatResponse) -> str:
             response_content = response_content[len("SQLQuery:"):]
 
     # Locate the starting position of the explanation in the response
-    sql_result_start = response_content.find("Explanation:")
-    if sql_result_start != -1:
+    sql_result_end = response_content.find("Explanation:")
+    if sql_result_end != -1:
         # Exclude everything after "Explanation:"
-        response_content = response_content[:sql_result_start]
+        response_content = response_content[:sql_result_end]
 
     # Clean up the response by stripping unnecessary characters and markdown code blocks
     sql_query = response_content.strip().strip("```").strip()

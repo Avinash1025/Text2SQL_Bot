@@ -1,5 +1,4 @@
 # ============================ SQL Prompt Functions ============================
-
 def sql_llm_prompt_function(query_str: str, schema: str) -> str:
     """
     Generate a prompt for the LLM to create an SQLite query based on user input and schema.
@@ -27,7 +26,6 @@ You are an AI assistant that generates a `sqlite` query strictly following the u
 You are strictly required to always give the answer in the following format:
 Question: Question here
 Table Selected For Query: Table Name
-Selected Table Schema: Table Schema
 SQLQuery: SQL Query to run
 Explanation: Explanation of SQL Query
 
