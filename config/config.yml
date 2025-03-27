@@ -1,8 +1,8 @@
 # flask app setting
-app:
+server:
   debug: true
-  host: "0.0.0.0"
-  port: 95890
+  host: "127.0.0.1"
+  port: 5000
 
 groq: 
   model: "llama3-8b-8192"

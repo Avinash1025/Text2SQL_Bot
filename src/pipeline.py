@@ -55,8 +55,8 @@ sql_query_pipeline.add_links([
 ])
 
 
-# Create a graph visualization of the pipeline
-from pyvis.network import Network
-net = Network(notebook=True, cdn_resources="in_line", directed=True)
-net.from_nx(sql_query_pipeline.dag)
-net.show("sql_query_pipeline.html")
+# # Create a graph visualization of the pipeline
+# from pyvis.network import Network
+# net = Network(notebook=True, cdn_resources="in_line", directed=True)
+# net.from_nx(sql_query_pipeline.dag)
+# net.show("sql_query_pipeline.html")
