@@ -80,6 +80,7 @@ obj_index = ObjectIndex.from_objects(
 # Create a retriever for fetching similar objects (tables) based on queries
 table_retriever = obj_index.as_retriever(similarity_top_k=3)
 
+
 # ============================ SQL Query Executor ============================
 # Initialize the SQLRetriever with the SQLDatabase instance
 SQL_QUERY_EXECUTOR = SQLRetriever(sql_database)

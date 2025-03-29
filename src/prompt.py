@@ -11,11 +11,13 @@ def sql_llm_prompt_function(query_str: str, schema: str) -> str:
         str: Formatted prompt string for the LLM.
     """
     prompt_str = (
-        f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+    f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 You are an AI assistant that generates a `sqlite` query strictly following the user's input. You are given the following inputs:
 - User Input: {query_str}
 - Schemas: {schema}
 **SQL Query Generation Guidelines:**
+- Only generate an SQL query if the user input is a database-related question.
+- If the input is a general question (e.g., greetings, casual conversation, or non-database-related queries), return `None` as the SQL query.
 - Only use the columns listed in the schema of the selected table.
 - Avoid using columns or database-specific functions that are not present in the selected table's schema.
 - The generated SQL query must strictly follow `sqlite` syntax.
@@ -25,14 +27,15 @@ You are an AI assistant that generates a `sqlite` query strictly following the u
 
 You are strictly required to always give the answer in the following format:
 Question: Question here
-Table Selected For Query: Table Name
-SQLQuery: SQL Query to run
-Explanation: Explanation of SQL Query
+Table Selected For Query: Table Name (if applicable)
+SQLQuery: SQL Query to run (or `None` if the input is not a database-related question)
+Explanation: Explanation of SQL Query (if applicable)
 
-Give only and only the SQL query, don't give any text with it.
+For non-database-related questions, return `None` as the SQL query.  
+Give only and only the SQL query, don't give any text with it.  
 <|eot_id|>
 <|start_header_id|>assistant<|end_header_id|>"""
-    )
+)
     print(prompt_str)
     return prompt_str
 
@@ -84,15 +87,7 @@ def final_response_prompt(query_str: str, sql_query: str, data) -> str:
         )
     else:
         prompt_str = (
-            "It seems that the provided data is empty, or the query didn't return any results.\n\n"
             f"User's Query: {query_str}\n\n"
-            "Unfortunately, no results were fetched. This could be due to:\n"
-            "- Missing or incomplete data for the specified criteria.\n"
-            "- An improperly formulated query or insufficient information.\n\n"
-            "Suggestions:\n"
-            "- Rephrase your question or provide more details.\n"
-            "- Verify the data availability for the specified criteria.\n"
-            "- Ensure there are no typos or errors in the query.\n\n"
             "Response:"
         )
 

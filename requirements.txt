@@ -2,6 +2,8 @@
 Flask>=2.3.0
 Flask-Cors>=4.0.0
 Werkzeug>=3.0.0
+flask-cors 
+flask-limiter
 
 # Llama Index and Related Packages
 llama-index==0.11.13
